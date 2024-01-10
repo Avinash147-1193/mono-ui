@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import StackNavigation from "./navigation";
+import React from "react";
 export default function App() {
   return (
     <View style={styles.container}>
