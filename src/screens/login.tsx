@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, Image } from "react-native";
-//import { useSelector, useDispatch } from "react-redux";
-//import { API } from "../constants/GlobalAPI";
-//import axios from "axios";
+import { Icon } from "react-native-elements";
 import { GlobalColors } from "../constants/GlobalColors";
+import ButtonLogin from "../components/buttons/buttonLogin";
 
 //const SERVER_STATE = API.CURRENT_STATE;
 
@@ -48,12 +47,11 @@ const LoginScreen = () => {
   return (
     <View style={styles.container}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
-      <TextInput style={styles.input} placeholder="Phone number, username, or email" onChangeText={(text) => setUsername(text)} value={username} />
+      <TextInput style={styles.input} placeholder="Phone, username, or email" onChangeText={(text) => setUsername(text)} value={username} />
       <TextInput style={styles.input} placeholder="Password" onChangeText={(text) => setPassword(text)} value={password} secureTextEntry={true} />
       {validationError ? <Text style={styles.validationError}>{validationError}</Text> : null}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Log In</Text>
-      </TouchableOpacity>
+
+      <ButtonLogin title="Log In" onPress={handleLogin} />
       <View style={styles.forgotPasswordContainer}>
         <TouchableOpacity>
           <Text style={styles.forgotPasswordText}>Forgot your login details? Get help signing in.</Text>
@@ -64,9 +62,11 @@ const LoginScreen = () => {
         <Text style={styles.orText}>OR</Text>
         <View style={styles.orLine}></View>
       </View>
-      <TouchableOpacity style={styles.facebookLoginButton}>
-        <Text style={styles.facebookLoginButtonText}>Log in with Facebook</Text>
-      </TouchableOpacity>
+      <ButtonLogin title="Log in with" icon={<Icon raised name="google" type="font-awesome" color="#f50" />} />
+      {/* <TouchableOpacity style={styles.facebookLoginButton}>
+      
+        <Text style={styles.facebookLoginButtonText}>Log in with Google</Text>
+      </TouchableOpacity> */}
       <View style={styles.signupContainer}>
         <Text style={styles.signupText}>Don't have an account? </Text>
         <TouchableOpacity>
