@@ -3,46 +3,17 @@ import { StyleSheet, View, TextInput, TouchableOpacity, Text, Image } from "reac
 import { Icon } from "react-native-elements";
 import { GlobalColors } from "../constants/GlobalColors";
 import ButtonLogin from "../components/buttons/buttonLogin";
+import Separator from "../components/separators/defaultSeparator";
+import { handleLogin } from "../helper/auth/auth";
 
 //const SERVER_STATE = API.CURRENT_STATE;
 
 //{ navigation }: { navigation: any }
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }: { navigation: any }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [validationError, setValidationError] = useState("");
   //const dispatch = useDispatch();
-
-  const handleLogin = async () => {
-    if (username && password) {
-      if (/^[a-zA-Z0-9-'@,.']+$/.test(username) && username.length > 5 && password.length > 7) {
-      } else {
-        setValidationError("Invalid username or password");
-      }
-    } else {
-      setValidationError("Please enter your username and password");
-    }
-
-    // try {
-    //   let baseUrl = API[SERVER_STATE] + API.USER.login;
-    //   console.log(baseUrl);
-    //   await axios
-    //     .post(baseUrl, {
-    //       user_id: username,
-    //       password: password,
-    //     })
-    //     .then((res) => {
-    //       console.log("-----------res-data", res.data);
-    //       dispatch(setAuthUser(res.data));
-    //       navigation.push("HomeScreen");
-    //     })
-    //     .catch((error) => console.log(error));
-    //   // Handle the response from the server
-    //   // e.g., store the authentication token in AsyncStorage, navigate to the main app screen, etc.
-    // } catch (error) {
-    //   console.log("catch block", error);
-    // }
-  };
 
   return (
     <View style={styles.container}>
@@ -51,22 +22,31 @@ const LoginScreen = () => {
       <TextInput style={styles.input} placeholder="Password" onChangeText={(text) => setPassword(text)} value={password} secureTextEntry={true} />
       {validationError ? <Text style={styles.validationError}>{validationError}</Text> : null}
 
-      <ButtonLogin title="Log In" onPress={handleLogin} />
+      <ButtonLogin title="Log In" onPress={() => handleLogin(username, password, setValidationError, navigation)} />
       <View style={styles.forgotPasswordContainer}>
         <TouchableOpacity>
           <Text style={styles.forgotPasswordText}>Forgot your login details? Get help signing in.</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.orContainer}>
-        <View style={styles.orLine}></View>
-        <Text style={styles.orText}>OR</Text>
-        <View style={styles.orLine}></View>
+        <Separator containerStyle={{ width: "40%" }} />
+        <Text>OR</Text>
+        <Separator containerStyle={{ width: "40%" }} />
       </View>
-      <ButtonLogin title="Log in with" icon={<Icon raised name="google" type="font-awesome" color="#f50" />} />
-      {/* <TouchableOpacity style={styles.facebookLoginButton}>
-      
-        <Text style={styles.facebookLoginButtonText}>Log in with Google</Text>
-      </TouchableOpacity> */}
+      <View style={styles.horizontalContainer}>
+        <Text>Log in with </Text>
+        <ButtonLogin
+          title=""
+          icon={<Icon color={GlobalColors.primary.white} name="google" type="font-awesome" size={14} />}
+          buttonStyle={{ padding: 0, width: 31, height: 31 }}
+        />
+        <ButtonLogin
+          title=""
+          icon={<Icon name="linkedin" color={GlobalColors.primary.white} type="font-awesome" size={13} />}
+          buttonStyle={{ padding: 0, width: 31, height: 31 }}
+        />
+      </View>
+
       <View style={styles.signupContainer}>
         <Text style={styles.signupText}>Don't have an account? </Text>
         <TouchableOpacity>
@@ -80,10 +60,16 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: GlobalColors.primary.white,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+  },
+  horizontalContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
   },
   logo: {
     width: 225,
@@ -94,29 +80,15 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     borderWidth: 1,
-    borderColor: "#DBDBDB",
+    borderColor: GlobalColors.buttonColor.primary,
     borderRadius: 5,
     paddingLeft: 10,
     marginBottom: 10,
   },
   validationError: {
-    color: "#FF0000",
+    color: GlobalColors.primary.error,
     fontSize: 14,
     marginBottom: 10,
-  },
-  loginButton: {
-    width: "100%",
-    height: 50,
-    backgroundColor: GlobalColors.elements.loginButton,
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
-  },
-  loginButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   forgotPasswordContainer: {
     width: "100%",
@@ -135,30 +107,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginVertical: 10,
   },
-  orLine: {
-    width: "40%",
-    height: 1,
-    backgroundColor: "#DBDBDB",
-  },
-  orText: {
-    color: "#8E8E8E",
-    fontSize: 14,
-    marginHorizontal: 10,
-  },
-  facebookLoginButton: {
-    width: "100%",
-    height: 50,
-    backgroundColor: GlobalColors.primary.black,
-    borderRadius: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
-  },
-  facebookLoginButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   signupContainer: {
     width: "100%",
     flexDirection: "row",
@@ -166,11 +114,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   signupText: {
-    color: "#8E8E8E",
+    color: GlobalColors.text.grayText,
     fontSize: 14,
   },
   signupLink: {
-    color: "#003569",
+    color: GlobalColors.text.postText,
     fontSize: 14,
   },
 });

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ViewStyle, TextStyle } from "react-native";
 import { Button, ButtonProps } from "@rneui/themed";
+import { GlobalColors } from "../../constants/GlobalColors";
 
 interface ButtonLoginProps {
   title: string;
@@ -10,9 +11,19 @@ interface ButtonLoginProps {
   loadingProps?: ButtonProps["loadingProps"];
   onPress?: () => void; // New prop to handle button press
   icon?: any;
+  iconAlign?: "left" | "right" | "bottom" | undefined;
 }
 
-const ButtonLogin: React.FunctionComponent<ButtonLoginProps> = ({ title, containerStyle, titleStyle, buttonStyle, loadingProps, onPress, icon }) => {
+const ButtonLogin: React.FunctionComponent<ButtonLoginProps> = ({
+  title,
+  containerStyle,
+  titleStyle,
+  buttonStyle,
+  loadingProps,
+  onPress,
+  icon,
+  iconAlign,
+}) => {
   const [loading, setLoading] = useState(false);
 
   const onPressHandler = () => {
@@ -29,7 +40,7 @@ const ButtonLogin: React.FunctionComponent<ButtonLoginProps> = ({ title, contain
       loading={loading}
       loadingProps={loadingProps || { size: "small", color: "white" }}
       buttonStyle={{
-        backgroundColor: "rgba(111, 202, 186, 1)",
+        backgroundColor: GlobalColors.buttonColor.primary,
         borderRadius: 20,
         ...buttonStyle,
       }}
@@ -39,15 +50,16 @@ const ButtonLogin: React.FunctionComponent<ButtonLoginProps> = ({ title, contain
         ...titleStyle,
       }}
       containerStyle={{
-        backgroundColor: "rgba(111, 202, 186, 1)",
+        backgroundColor: GlobalColors.buttonColor.primary,
         borderRadius: 20,
+        margin: 2,
         ...buttonStyle,
         ...containerStyle,
       }}
       onPress={onPressHandler}
       raised={true}
       icon={icon}
-      iconRight
+      iconPosition={iconAlign}
       iconContainerStyle={{ marginLeft: 10, marginRight: -10 }}
     />
   );
