@@ -4,19 +4,9 @@ export const Fonts = {
   Bold: "YourBoldFont",
 };
 
-// Media types used in the app
-export const Media = {
-  Icons: {
-    HomeIcon: require("../assets/icons/home.png"),
-  },
-  Images: {
-    Logo: require("../assets/images/logo.png"),
-  },
-};
-
-export const Colors = {
-  Primary: "#0A84FF",
-  Secondary: "#FF6D00",
+export const Platforms = {
+  IOS: "ios",
+  ANDROID: "andorid",
   // Add more color values as needed
 };
 
@@ -25,11 +15,6 @@ export const Dimensions = {
   ScreenWidth: 360,
   ScreenHeight: 640,
   // Add more dimension values as needed
-};
-
-// API endpoints used in the app
-export const APIEndpoints = {
-  BaseURL: "https://api.example.com/",
 };
 
 export const AnimationDurations = {
@@ -42,10 +27,8 @@ export const AnimationDurations = {
 // Export all the constants
 export default {
   Fonts,
-  Media,
-  Colors,
+  Platforms,
   Dimensions,
-  APIEndpoints,
   AnimationDurations,
   // OtherConstants,
 };

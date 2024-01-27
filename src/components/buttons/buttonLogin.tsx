@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ViewStyle, TextStyle } from "react-native";
 import { Button, ButtonProps } from "@rneui/themed";
-import { GlobalColors } from "../../constants/GlobalColors";
+import { GlobalColors, GlobalMode } from "../../constants/GlobalColors";
 
 interface ButtonLoginProps {
   title: string;
@@ -40,7 +40,7 @@ const ButtonLogin: React.FunctionComponent<ButtonLoginProps> = ({
       loading={loading}
       loadingProps={loadingProps || { size: "small", color: "white" }}
       buttonStyle={{
-        backgroundColor: GlobalColors.buttonColor.primary,
+        backgroundColor: GlobalColors[GlobalMode].button.primary,
         borderRadius: 20,
         ...buttonStyle,
       }}
@@ -50,7 +50,7 @@ const ButtonLogin: React.FunctionComponent<ButtonLoginProps> = ({
         ...titleStyle,
       }}
       containerStyle={{
-        backgroundColor: GlobalColors.buttonColor.primary,
+        backgroundColor: GlobalColors[GlobalMode].button.primary,
         borderRadius: 20,
         margin: 2,
         ...buttonStyle,
