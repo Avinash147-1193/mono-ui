@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API, CURRENT_STATE } from "../../constants/GlobalAPI";
-import { loginUser } from "../../redux/auth/action";
+import { loginUser, setAuthUserLikedPost, setAuthUserPost, setAuthUserProfile } from "../../redux/auth/action";
 
 export const handleLogin = async (
   username: string,
@@ -28,9 +28,71 @@ export const handleLogin = async (
         password: password,
       })
       .then((res) => {
-        console.log("-----------res-data", res.data);
-        dispatch(loginUser(res.data));
-        //navigation.push("HomeScreen");
+        dispatch(loginUser(res.data.access_token));
+        if (res.data.access_token) navigation.push("HomeScreen");
+      })
+      .catch((error) => console.log(error));
+  } catch (error) {
+    throw new Error(`error: ${error}`);
+  }
+};
+
+export const fetchUserProfile = async (dispatch: any, token: string | null) => {
+  try {
+    const baseUrl = `${API[CURRENT_STATE]}${API.USER.profile}`;
+    console.log(baseUrl);
+    axios
+      .request({
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        method: "GET",
+        url: baseUrl,
+      })
+      .then((res) => {
+        dispatch(setAuthUserProfile(res.data));
+      })
+      .catch((error) => console.log(error));
+  } catch (error) {
+    throw new Error(`error: ${error}`);
+  }
+};
+
+export const fetchUserPosts = async (dispatch: any, token: string | null) => {
+  try {
+    const baseUrl = `${API[CURRENT_STATE]}${API.USER.post}`;
+    console.log(baseUrl);
+    axios
+      .request({
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        method: "GET",
+        url: baseUrl,
+      })
+      .then((res) => {
+        dispatch(setAuthUserPost(res.data));
+      })
+      .catch((error) => console.log(error));
+  } catch (error) {
+    throw new Error(`error: ${error}`);
+  }
+};
+
+export const fetchUserLikedPosts = async (dispatch: any, token: string | null) => {
+  try {
+    const baseUrl = `${API[CURRENT_STATE]}${API.USER.like}`;
+    console.log(baseUrl);
+    axios
+      .request({
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        method: "GET",
+        url: baseUrl,
+      })
+      .then((res) => {
+        dispatch(setAuthUserLikedPost(res.data));
       })
       .catch((error) => console.log(error));
   } catch (error) {

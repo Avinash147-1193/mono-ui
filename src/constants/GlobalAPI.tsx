@@ -5,9 +5,9 @@ export const API = {
 
   USER: {
     login: "auth/login",
-    profile: "profile/",
-    post: "post/",
-    postLike: "post/like/",
+    profile: "profile",
+    post: "post/suggested",
+    like: "like",
   },
   POST: {
     comments: "post/comment/",

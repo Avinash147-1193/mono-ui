@@ -1,17 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import logger from "redux-logger";
 import authReducer from "./auth/reducer";
+import { thunk } from "redux-thunk";
 
 // Root State
-export interface RootState {
-  auth: ReturnType<typeof authReducer>;
-  // Add more reducers if needed
-}
+export type RootState = ReturnType<typeof authReducer>;
 
 // Store
 const store = configureStore({
   reducer: authReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger).concat(thunk),
 });
 
 export default store;
