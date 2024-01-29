@@ -32,18 +32,18 @@ const authReducer = (state = initialState, action: AuthActionTypes): AuthState =
     case SET_AUTH_LIKED_POSTS:
       return {
         ...state,
-        likedPost: action.likedPost,
+        likedPost: action.payload,
       };
     case SET_AUTH_POST:
       return {
         ...state,
-        post: action.post,
+        post: action.payload,
       };
 
     case SET_AUTH_LIKE_REACT:
       return {
         ...state,
-        likeReacts: action.likeReacts,
+        likeReacts: action.payload,
       };
     default:
       return state; // Ensure you have a default case to handle unknown actions

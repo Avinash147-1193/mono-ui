@@ -1,46 +1,57 @@
-import React, { useRef } from "react";
-import { View, SafeAreaView, StyleSheet, Animated, Platform } from "react-native";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import { View, SafeAreaView, StyleSheet, Animated, Platform, Dimensions, ScrollView } from "react-native";
 import Header from "../components/home/Header";
 import { GlobalColors, GlobalMode } from "../constants/GlobalColors";
 import BottomTabs, { bottomTabIcon } from "../components/home/BottomTabs";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Divider } from "react-native-elements";
 import SkeletonLoader from "../components/loaders/Post/SkeletonLoader";
 import { Platforms } from "../constants/Common";
 import { RootState } from "../redux/store";
+import { fetchUserLikedPosts, fetchUserPosts, fetchUserProfile } from "../helper/auth/auth";
+import Post from "../components/home/Post";
 //import { fetchUserLikedPosts, fetchUserPosts, fetchUserProfile } from "../helper/auth/auth";
 
 const HEADER_HEIGHT = 50; // Customize the header height here
 const marginTop = Platform.OS === Platforms.ANDROID ? 19 : 0;
 
 const HomeScreen = ({ navigation }: { navigation: any }) => {
-  //const token = useSelector((state: RootState) => state.data);
-
+  const token = useSelector((state: RootState) => state.data);
   const userPosts = useSelector((state: RootState) => state.post);
-  //const [videoInView, setVideoInView] = useState(false);
+  const [videoInView] = useState(false);
 
   //const username = user.user_id;
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const scrollY = new Animated.Value(0);
   const headerOpacity = new Animated.Value(1);
   const headerContainerRef = useRef(null);
 
-  // useEffect(() => {
-  //   const profile = fetchUserProfile(dispatch, token);
-  //   const post = fetchUserPosts(dispatch, token);
-  //   const likedPosts = fetchUserLikedPosts(dispatch, token);
-  // }, []);
+  useLayoutEffect(() => {
+    const fetchData = async () => {
+      try {
+        await fetchUserProfile(dispatch, token);
+        await fetchUserPosts(dispatch, token);
+        await fetchUserLikedPosts(dispatch, token);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        //setLoading(false);
+      }
+    };
 
-  // const handleScroll = (event: any) => {
-  //   const scrollPosition = event.nativeEvent.contentOffset.y;
-  //   const screenHeight = Dimensions.get("window").height;
+    fetchData();
+  }, [dispatch, token]);
 
-  //   if (scrollPosition > 0 && scrollPosition < screenHeight) {
-  //     //setVideoInView(true);
-  //   } else {
-  //     //setVideoInView(false);
-  //   }
-  // };
+  const handleScroll = (event: any) => {
+    const scrollPosition = event.nativeEvent.contentOffset.y;
+    const screenHeight = Dimensions.get("window").height;
+
+    if (scrollPosition > 0 && scrollPosition < screenHeight) {
+      //setVideoInView(true);
+    } else {
+      //setVideoInView(false);
+    }
+  };
 
   if (!userPosts) {
     return (
@@ -76,23 +87,15 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
         <Header navigation={navigation} />
         <Divider width={1} orientation="vertical" />
       </Animated.View>
-      {/* <View style={styles.postContainer}>
-        <ScrollView
-          contentContainerStyle={styles.scrollViewContent}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-        >
+      <View style={styles.postContainer}>
+        <ScrollView contentContainerStyle={styles.scrollViewContent} onScroll={handleScroll} scrollEventThrottle={16}>
           {userPosts.map((post, index) => (
             <View key={index}>
-              <Post
-                post={post}
-                navigation={navigation}
-                videoInView={videoInView}
-              />
+              <Post post={post} navigation={navigation} videoInView={videoInView} />
             </View>
           ))}
         </ScrollView>
-      </View> */}
+      </View>
       <BottomTabs icons={bottomTabIcon} />
     </SafeAreaView>
   );

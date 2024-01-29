@@ -2,23 +2,23 @@ import React, { useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { Video } from "expo-av";
 
-interface Post {
-  fields: {
-    post_images: string;
-    // Add more properties as needed
-  };
-  // Add more properties as needed
-}
+// interface Post {
+//   fields: {
+//     post_images: string;
+//     // Add more properties as needed
+//   };
+//   // Add more properties as needed
+// }
 
 interface PostImageProps {
-  post: Post;
+  post: any;
   scrollViewRef?: string;
 }
 
 const PostImage: React.FC<PostImageProps> = ({ post }) => {
   const [videoInView] = useState<boolean>(false);
-
-  const postImages = post.fields.post_images;
+  console.log("-----postdata", post.post);
+  const postImages = post.post?.media?.images[1]?.imgUrl;
 
   // const handlePlaybackStatusUpdate = (status: { isPlaying: boolean; positionMillis: number; durationMillis: number }) => {
   //   const { isPlaying, positionMillis, durationMillis } = status;

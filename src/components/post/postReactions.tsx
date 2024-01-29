@@ -9,11 +9,11 @@ import { RootState } from "../../redux/store";
 const SERVER_STATE = CURRENT_STATE;
 
 interface Post {
-  pk: number;
+  _id: number;
 }
 
 interface PostReactionsProps {
-  post: Post;
+  post: any;
   navigation: any; // Adjust the type according to your actual navigation type
   setLikesCount: (count: number) => void;
   likesCount: number;
@@ -40,39 +40,41 @@ const postFooterIcons = [
 ];
 
 const PostReactions: React.FC<PostReactionsProps> = ({ post, navigation, setLikesCount, likesCount }) => {
-  const { likedPost, user } = useSelector((state: any) => state.authReducer);
+  const likedPost = useSelector((state: any) => state.likedPost);
+  const user = useSelector((state: any) => state.profile);
+  const token = useSelector((state: any) => state.data);
   const [like, setLike] = useState<number | string>("");
   const dispatch = useDispatch<ThunkDispatch<RootState, unknown, AuthActionTypes>>();
 
   useEffect(() => {
-    if (likedPost.indexOf(post.pk) >= 0) {
+    if (likedPost && likedPost.indexOf(post._id) >= 0) {
       setLike(1);
     } else {
       setLike(0);
     }
-  }, [likedPost, post.pk]);
+  }, [likedPost, post._id]);
 
   const HandleLike = (post: Post) => {
     like === 0 ? setLikesCount(likesCount + 1) : setLikesCount(likesCount - 1);
 
     if (like === 0) {
       const temp = likedPost.slice();
-      temp.push(post.pk);
+      temp.push(post._id);
       dispatch(setAuthUserLikedPost(temp));
     } else {
       const temp = likedPost.slice();
-      const index = temp.indexOf(post.pk);
+      const index = temp.indexOf(post._id);
       temp.splice(index, 1);
       dispatch(setAuthUserLikedPost(temp));
     }
     setLike(like === 0 ? 1 : 0);
 
     try {
-      const baseUrl = API[SERVER_STATE] + API.USER.postLike;
+      const baseUrl = API[SERVER_STATE] + API.POST.like;
       const response = axios.post(baseUrl, {
-        username: user.user_id,
-        token: user.token,
-        post: { post_id: post.pk },
+        username: user.username,
+        token: token,
+        post: { postId: post._id },
       });
       console.log(`hit url: ${baseUrl} response received: ${response}`);
     } catch (error) {

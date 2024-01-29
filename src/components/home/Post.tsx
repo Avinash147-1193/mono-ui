@@ -8,11 +8,11 @@ import { Divider } from "react-native-elements";
 import { GlobalColors, GlobalMode } from "../../constants/GlobalColors";
 import { POSTS } from "../.../../../../data/Posts";
 
-const Post = ({ navigation }: { navigation: any }, post: any) => {
+const Post = (post: { [key: string]: any }, { navigation }: { navigation: any }) => {
   const scrollViewRef = useRef(null);
   const [videoInView, setVideoInView] = useState(false);
-  const [likesCount, setLikesCount] = useState(post.fields.likes);
-
+  const [likesCount, setLikesCount] = useState(post.post.reactions.LIKES);
+  console.log("------asasasasas", likesCount);
   const handleScroll = (event: any) => {
     const scrollPosition = event.nativeEvent.contentOffset.y;
     const screenHeight = Dimensions.get("window").height - Constants.statusBarHeight;
@@ -20,10 +20,9 @@ const Post = ({ navigation }: { navigation: any }, post: any) => {
 
     setVideoInView(isVideoInView || videoInView);
   };
-
   return (
     <View style={{ marginBottom: 30 }}>
-      <PostHeader post={post} />
+      <PostHeader post={post.post} />
       <ScrollView ref={scrollViewRef} onScroll={handleScroll} scrollEventThrottle={16}>
         <PostImage
           post={post}
@@ -33,9 +32,9 @@ const Post = ({ navigation }: { navigation: any }, post: any) => {
         />
         <View style={{ marginHorizontal: 15, marginTop: 10 }}>
           <PostReactions post={post} navigation={navigation} setLikesCount={setLikesCount} likesCount={likesCount} />
-          <Likes post={post} likesCount={likesCount} />
-          <Caption post={post} />
-          <CommentSection post={post} />
+          <Likes likesCount={likesCount} />
+          <Caption post={post.post} />
+          <CommentSection post={post.post} />
           <Comments />
           <Divider width={1} orientation="vertical" style={styles.divider} />
         </View>
@@ -46,25 +45,25 @@ const Post = ({ navigation }: { navigation: any }, post: any) => {
 
 const Likes = (likesCount: any) => (
   <View style={{ flexDirection: "row", marginTop: 4 }}>
-    <Text style={{ color: GlobalColors[GlobalMode].text.postText, fontWeight: "600" }}>{likesCount} likes</Text>
+    <Text style={{ color: GlobalColors[GlobalMode].text.postText, fontWeight: "600" }}>{likesCount.likesCount} likes</Text>
   </View>
 );
 
 const Caption = (post: any) => (
   <View style={{ marginTop: 5 }}>
     <Text style={{ color: GlobalColors[GlobalMode].text.postText }}>
-      {/* <Text style={{ fontWeight: 600 }}>{POSTS[0].user}</Text> */}
-      <Text> {post.fields.text}</Text>
+      <Text>{POSTS[0].user}</Text>
+      <Text> {post.caption}</Text>
     </Text>
   </View>
 );
 
 const CommentSection = (post: any) => (
   <View style={{ marginTop: 5 }}>
-    {!!post.fields.comments.length && (
+    {!!post.post.comments.length && (
       <Text style={{ color: GlobalColors[GlobalMode].text.postText }}>
-        View{post.fields.comments.length > 1 ? " all" : ""} {post.fields.comments.length}
-        {post.fields.comments.length > 1 ? " comments" : " comment"}
+        {post.comments.length > 1 ? " all" : ""} {post.post.comments.length}
+        {post.comments.length > 1 ? " comments" : " comment"}
       </Text>
     )}
   </View>

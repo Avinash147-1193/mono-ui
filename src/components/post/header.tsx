@@ -2,20 +2,25 @@ import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import { GlobalColors, GlobalMode } from "../../constants/GlobalColors";
 
-interface Post {
-  fields: {
-    profile_picture?: string;
-    username?: string;
-  };
-}
+// interface Post {
+//   fields: {
+//     profile_picture?: string;
+//     username?: string;
+//   };
+// }
 
 interface PostHeaderProps {
-  post: Post;
+  post: any;
 }
 
 const PostHeader: React.FC<PostHeaderProps> = ({ post }) => {
   // Check if the required properties are present in the post object
-  if (!post || !post.fields || !post.fields.profile_picture || !post.fields.username) {
+  if (
+    !post
+    // !post. ||
+    // !post.fields.profile_picture ||
+    // !post.fields.username
+  ) {
     return null; // Render nothing if the required properties are not available
   }
 
@@ -29,7 +34,7 @@ const PostHeader: React.FC<PostHeaderProps> = ({ post }) => {
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <Image source={{ uri: post.fields.profile_picture }} style={styles.story} />
+        <Image source={{ uri: post.user.profile.display.profilePictures[0].imgUrl }} style={styles.story} />
         <Text
           style={{
             color: GlobalColors[GlobalMode].text.postText,
@@ -37,11 +42,18 @@ const PostHeader: React.FC<PostHeaderProps> = ({ post }) => {
             fontWeight: "700",
           }}
         >
-          {post.fields.username}
+          `${post.user.firstName}${post.user.lastName}`
         </Text>
       </View>
       <TouchableOpacity>
-        <Text style={{ color: GlobalColors[GlobalMode].text.postText, fontWeight: "900" }}>...</Text>
+        <Text
+          style={{
+            color: GlobalColors[GlobalMode].text.postText,
+            fontWeight: "900",
+          }}
+        >
+          ...
+        </Text>
       </TouchableOpacity>
     </View>
   );

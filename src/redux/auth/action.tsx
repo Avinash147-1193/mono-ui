@@ -22,17 +22,17 @@ interface SetAuthProfileAction {
 
 interface SetAuthLikedPostAction {
   type: typeof SET_AUTH_LIKED_POSTS;
-  likedPost: [];
+  payload: any;
 }
 
 interface SetAuthPostAction {
   type: typeof SET_AUTH_POST;
-  post: [];
+  payload: any;
 }
 
 interface SetAuthPostLikeReactAction {
   type: typeof SET_AUTH_LIKE_REACT;
-  likeReacts: [];
+  payload: any;
 }
 
 export type AuthActionTypes = SetAuthTokenAction | SetAuthProfileAction | SetAuthPostLikeReactAction | SetAuthPostAction | SetAuthLikedPostAction;
@@ -57,25 +57,25 @@ export const setAuthUserProfile =
   };
 
 export const setAuthUserPost =
-  (post: []): ThunkAction<void, RootState, unknown, SetAuthPostAction> =>
+  (payload: any): ThunkAction<void, RootState, unknown, SetAuthPostAction> =>
   async (dispatch: Dispatch) => {
     dispatch({
       type: SET_AUTH_POST,
-      payload: post,
+      payload: payload,
     });
   };
 
 export const setAuthUserLikedPost =
-  (likedPost: []): ThunkAction<void, RootState, unknown, SetAuthLikedPostAction> =>
+  (payload: any): ThunkAction<void, RootState, unknown, SetAuthLikedPostAction> =>
   async (dispatch: Dispatch) => {
     dispatch({
       type: SET_AUTH_LIKED_POSTS,
-      payload: likedPost,
+      payload: payload,
     });
   };
 
 export const setAuthUserLikeReact =
-  (likeReacts: []): ThunkAction<void, RootState, unknown, SetAuthPostLikeReactAction> =>
+  (likeReacts: any): ThunkAction<void, RootState, unknown, SetAuthPostLikeReactAction> =>
   async (dispatch: Dispatch) => {
     dispatch({
       type: SET_AUTH_LIKE_REACT,

@@ -13,5 +13,6 @@ export const API = {
     comments: "post/comment/",
     replysOnComment: "post/reply/",
     reply: "post/reply/",
+    like: "like/",
   },
 };

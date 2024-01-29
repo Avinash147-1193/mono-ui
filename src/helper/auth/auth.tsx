@@ -21,7 +21,7 @@ export const handleLogin = async (
 
   try {
     const baseUrl = `${API[CURRENT_STATE]}${API.USER.login}`;
-    console.log(baseUrl);
+    console.log("--axios-call", baseUrl);
     await axios
       .post(baseUrl, {
         username: username,
@@ -40,7 +40,7 @@ export const handleLogin = async (
 export const fetchUserProfile = async (dispatch: any, token: string | null) => {
   try {
     const baseUrl = `${API[CURRENT_STATE]}${API.USER.profile}`;
-    console.log(baseUrl);
+    console.log("--axios-call", baseUrl);
     axios
       .request({
         headers: {
@@ -71,6 +71,7 @@ export const fetchUserPosts = async (dispatch: any, token: string | null) => {
         url: baseUrl,
       })
       .then((res) => {
+        console.log(baseUrl, res.data);
         dispatch(setAuthUserPost(res.data));
       })
       .catch((error) => console.log(error));
@@ -82,13 +83,13 @@ export const fetchUserPosts = async (dispatch: any, token: string | null) => {
 export const fetchUserLikedPosts = async (dispatch: any, token: string | null) => {
   try {
     const baseUrl = `${API[CURRENT_STATE]}${API.USER.like}`;
-    console.log(baseUrl);
+    console.log("--axios-call", baseUrl);
     axios
       .request({
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        method: "GET",
+        method: "POST",
         url: baseUrl,
       })
       .then((res) => {
