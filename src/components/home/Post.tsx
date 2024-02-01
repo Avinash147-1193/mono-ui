@@ -12,7 +12,6 @@ const Post = (post: { [key: string]: any }, { navigation }: { navigation: any })
   const scrollViewRef = useRef(null);
   const [videoInView, setVideoInView] = useState(false);
   const [likesCount, setLikesCount] = useState(post.post.reactions.LIKES);
-  console.log("------asasasasas", likesCount);
   const handleScroll = (event: any) => {
     const scrollPosition = event.nativeEvent.contentOffset.y;
     const screenHeight = Dimensions.get("window").height - Constants.statusBarHeight;
@@ -25,13 +24,13 @@ const Post = (post: { [key: string]: any }, { navigation }: { navigation: any })
       <PostHeader post={post.post} />
       <ScrollView ref={scrollViewRef} onScroll={handleScroll} scrollEventThrottle={16}>
         <PostImage
-          post={post}
+          post={post.post}
           // scrollViewRef={scrollViewRef}
           // videoInView={videoInView}
           // setVideoInView={setVideoInView}
         />
         <View style={{ marginHorizontal: 15, marginTop: 10 }}>
-          <PostReactions post={post} navigation={navigation} setLikesCount={setLikesCount} likesCount={likesCount} />
+          <PostReactions post={post.post} navigation={navigation} setLikesCount={setLikesCount} likesCount={likesCount} />
           <Likes likesCount={likesCount} />
           <Caption post={post.post} />
           <CommentSection post={post.post} />

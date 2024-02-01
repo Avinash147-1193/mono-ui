@@ -13,6 +13,7 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
   const [password, setPassword] = useState("");
   const [validationError, setValidationError] = useState("");
   const dispatch = useDispatch();
+
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (evt, gestureState) => {

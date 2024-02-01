@@ -11,7 +11,6 @@ export const handleLogin = async (
 ) => {
   if (username && password) {
     if (/^[a-zA-Z0-9-'@,.']+$/.test(username) && username.length > 5 && password.length > 7) {
-      navigation.push("HomeScreen");
     } else {
       setValidationError("Invalid username or password");
     }
@@ -31,7 +30,7 @@ export const handleLogin = async (
         dispatch(loginUser(res.data.access_token));
         if (res.data.access_token) navigation.push("HomeScreen");
       })
-      .catch((error) => console.log(error));
+      .catch(() => setValidationError("Invalid password"));
   } catch (error) {
     throw new Error(`error: ${error}`);
   }
@@ -71,7 +70,7 @@ export const fetchUserPosts = async (dispatch: any, token: string | null) => {
         url: baseUrl,
       })
       .then((res) => {
-        console.log(baseUrl, res.data);
+        console.log(baseUrl);
         dispatch(setAuthUserPost(res.data));
       })
       .catch((error) => console.log(error));
@@ -93,7 +92,11 @@ export const fetchUserLikedPosts = async (dispatch: any, token: string | null) =
         url: baseUrl,
       })
       .then((res) => {
-        dispatch(setAuthUserLikedPost(res.data));
+        const postIds = res.data.filter((data: any) => data.post && data.post._id !== undefined).map((data: any) => data.post._id);
+
+        if (postIds) {
+          dispatch(setAuthUserLikedPost(postIds));
+        }
       })
       .catch((error) => console.log(error));
   } catch (error) {

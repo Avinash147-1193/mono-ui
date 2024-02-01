@@ -1,4 +1,4 @@
-export const GlobalMode = "light";
+export const GlobalMode = "light" || "dark";
 export const GlobalColors = {
   light: {
     primary: {
@@ -22,7 +22,7 @@ export const GlobalColors = {
       grayText: "#8E8E8E",
     },
     button: {
-      primary: "#fcd6a7",
+      primary: "#4a807d",
       comment: "#4a807d",
       backButtonComment: "#f7fafa",
       commentLike: "black",

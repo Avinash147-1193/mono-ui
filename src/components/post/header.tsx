@@ -1,28 +1,46 @@
 import React from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, Share } from "react-native";
 import { GlobalColors, GlobalMode } from "../../constants/GlobalColors";
 
-// interface Post {
-//   fields: {
-//     profile_picture?: string;
-//     username?: string;
-//   };
-// }
+interface Post {
+  user: {
+    profile: {
+      display: {
+        profilePictures: [string: any];
+      };
+    };
+    firstName: string;
+    lastName: string;
+  };
+}
 
 interface PostHeaderProps {
-  post: any;
+  post: Post;
 }
 
 const PostHeader: React.FC<PostHeaderProps> = ({ post }) => {
-  // Check if the required properties are present in the post object
-  if (
-    !post
-    // !post. ||
-    // !post.fields.profile_picture ||
-    // !post.fields.username
-  ) {
-    return null; // Render nothing if the required properties are not available
+  if (!post) {
+    return null;
   }
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: "Mono-post share",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   return (
     <View
@@ -42,7 +60,7 @@ const PostHeader: React.FC<PostHeaderProps> = ({ post }) => {
             fontWeight: "700",
           }}
         >
-          `${post.user.firstName}${post.user.lastName}`
+          {post.user.firstName} {post.user.lastName}
         </Text>
       </View>
       <TouchableOpacity>
@@ -51,6 +69,7 @@ const PostHeader: React.FC<PostHeaderProps> = ({ post }) => {
             color: GlobalColors[GlobalMode].text.postText,
             fontWeight: "900",
           }}
+          onPress={onShare}
         >
           ...
         </Text>

@@ -8,19 +8,16 @@ import { Divider } from "react-native-elements";
 import SkeletonLoader from "../components/loaders/Post/SkeletonLoader";
 import { Platforms } from "../constants/Common";
 import { RootState } from "../redux/store";
-import { fetchUserLikedPosts, fetchUserPosts, fetchUserProfile } from "../helper/auth/auth";
+import { fetchUserPosts, fetchUserProfile } from "../helper/auth/auth";
 import Post from "../components/home/Post";
-//import { fetchUserLikedPosts, fetchUserPosts, fetchUserProfile } from "../helper/auth/auth";
 
-const HEADER_HEIGHT = 50; // Customize the header height here
+const HEADER_HEIGHT = 50;
 const marginTop = Platform.OS === Platforms.ANDROID ? 19 : 0;
 
 const HomeScreen = ({ navigation }: { navigation: any }) => {
   const token = useSelector((state: RootState) => state.data);
   const userPosts = useSelector((state: RootState) => state.post);
   const [videoInView] = useState(false);
-
-  //const username = user.user_id;
   const dispatch = useDispatch();
   const scrollY = new Animated.Value(0);
   const headerOpacity = new Animated.Value(1);
@@ -31,7 +28,7 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
       try {
         await fetchUserProfile(dispatch, token);
         await fetchUserPosts(dispatch, token);
-        await fetchUserLikedPosts(dispatch, token);
+        //await fetchUserLikedPosts(dispatch, token);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {

@@ -1,19 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { API, CURRENT_STATE } from "../../constants/GlobalAPI";
-import axios from "axios";
-import { AuthActionTypes, setAuthUserLikedPost } from "../../redux/auth/action";
-import { ThunkDispatch } from "redux-thunk";
-import { RootState } from "../../redux/store";
-const SERVER_STATE = CURRENT_STATE;
+import { useSelector } from "react-redux";
+import { HandleLike } from "../../helper/post/postAttibutes";
 
 interface Post {
-  _id: number;
+  _id: string;
 }
 
 interface PostReactionsProps {
-  post: any;
+  post: Post;
   navigation: any; // Adjust the type according to your actual navigation type
   setLikesCount: (count: number) => void;
   likesCount: number;
@@ -41,11 +36,8 @@ const postFooterIcons = [
 
 const PostReactions: React.FC<PostReactionsProps> = ({ post, navigation, setLikesCount, likesCount }) => {
   const likedPost = useSelector((state: any) => state.likedPost);
-  const user = useSelector((state: any) => state.profile);
   const token = useSelector((state: any) => state.data);
   const [like, setLike] = useState<number | string>("");
-  const dispatch = useDispatch<ThunkDispatch<RootState, unknown, AuthActionTypes>>();
-
   useEffect(() => {
     if (likedPost && likedPost.indexOf(post._id) >= 0) {
       setLike(1);
@@ -54,38 +46,14 @@ const PostReactions: React.FC<PostReactionsProps> = ({ post, navigation, setLike
     }
   }, [likedPost, post._id]);
 
-  const HandleLike = (post: Post) => {
-    like === 0 ? setLikesCount(likesCount + 1) : setLikesCount(likesCount - 1);
-
-    if (like === 0) {
-      const temp = likedPost.slice();
-      temp.push(post._id);
-      dispatch(setAuthUserLikedPost(temp));
-    } else {
-      const temp = likedPost.slice();
-      const index = temp.indexOf(post._id);
-      temp.splice(index, 1);
-      dispatch(setAuthUserLikedPost(temp));
-    }
-    setLike(like === 0 ? 1 : 0);
-
-    try {
-      const baseUrl = API[SERVER_STATE] + API.POST.like;
-      const response = axios.post(baseUrl, {
-        username: user.username,
-        token: token,
-        post: { postId: post._id },
-      });
-      console.log(`hit url: ${baseUrl} response received: ${response}`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <View style={{ flexDirection: "row" }}>
       <View style={styles.leftFooterIconsContainer}>
-        <Icon imageStyle={styles.footerIcon} onPress={() => HandleLike(post)} imgUrl={postFooterIcons[0].imageUrl} />
+        <Icon
+          imageStyle={styles.footerIcon}
+          onPress={() => HandleLike(post, setLikesCount, setLike, like, token, likesCount)}
+          imgUrl={like == 1 ? postFooterIcons[0].likedImageUrl : postFooterIcons[0].imageUrl}
+        />
         <Icon
           imageStyle={styles.footerIcon}
           onPress={() => navigation.push("CommentScreen", { postDetails: post })}
@@ -100,7 +68,11 @@ const PostReactions: React.FC<PostReactionsProps> = ({ post, navigation, setLike
   );
 };
 
-const Icon: React.FC<{ imageStyle: any; imgUrl: string; onPress: () => void }> = ({ imageStyle, imgUrl, onPress }) => (
+const Icon: React.FC<{
+  imageStyle: any;
+  imgUrl: string | undefined;
+  onPress: () => void;
+}> = ({ imageStyle, imgUrl, onPress }) => (
   <TouchableOpacity onPress={onPress}>
     <Image style={imageStyle} source={{ uri: imgUrl }} />
   </TouchableOpacity>

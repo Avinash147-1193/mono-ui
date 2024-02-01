@@ -14,5 +14,6 @@ export const API = {
     replysOnComment: "post/reply/",
     reply: "post/reply/",
     like: "like/",
+    newPost: "post",
   },
 };
