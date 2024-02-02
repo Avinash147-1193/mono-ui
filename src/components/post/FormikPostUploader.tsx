@@ -25,37 +25,34 @@ const FormikPostUploader = ({ navigation }: { navigation: any }) => {
   const user = useSelector((state: any) => state.data);
   const [thumbnailUrl, setThumbnailUrl] = useState(PLACEHOLDER_IMG);
   const dispatch = useDispatch<ThunkDispatch<RootState, unknown, AuthActionTypes>>();
+
   return (
     <Formik
       initialValues={{ text: "", postImages: "" }}
-      onSubmit={(values) => {
+      onSubmit={async (values) => {
         const createUserPost = async () => {
           try {
             const baseUrl = API[SERVER_STATE] + API.POST.newPost;
-            axios
-              .request({
-                headers: {
-                  Authorization: `Bearer ${user}`,
+            const response = await axios.request({
+              headers: {
+                Authorization: `Bearer ${user}`,
+              },
+              method: "POST",
+              url: baseUrl,
+              data: {
+                caption: values.text,
+                media: {
+                  images: [{ imgUrl: values.postImages, isActive: true }],
+                  videos: [
+                    {
+                      url: "https: //www.pngfind.com/pngs/m/39-398349_computer-icons-user-profile-facebook-instagram-instagram-profile.png",
+                      tagged_location: "google.maps/locations/city=blr&place=vanshee",
+                    },
+                  ],
                 },
-                method: "POST",
-                url: baseUrl,
-                data: {
-                  caption: values.text,
-                  media: {
-                    images: [{ imgUrl: values.postImages, isActive: true }],
-                    videos: [
-                      {
-                        url: "https: //www.pngfind.com/pngs/m/39-398349_computer-icons-user-profile-facebook-instagram-instagram-profile.png",
-                        tagged_location: "google.maps/locations/city=blr&place=vanshee",
-                      },
-                    ],
-                  },
-                },
-              })
-              .then((res) => {
-                console.log(baseUrl, res.data);
-              })
-              .catch((error) => console.log(error));
+              },
+            });
+            console.log(baseUrl, response.data);
           } catch (error) {
             console.log(error);
           }
@@ -64,26 +61,23 @@ const FormikPostUploader = ({ navigation }: { navigation: any }) => {
         const fetchUserPosts = async () => {
           try {
             const baseUrl = API[SERVER_STATE] + API.USER.post;
-            axios
-              .request({
-                headers: {
-                  Authorization: `Bearer ${user}`,
-                },
-                method: "GET",
-                url: baseUrl,
-              })
-              .then((res) => {
-                console.log(baseUrl, res.data);
-                dispatch(setAuthUserPost(res.data));
-              });
+            const response = await axios.request({
+              headers: {
+                Authorization: `Bearer ${user}`,
+              },
+              method: "GET",
+              url: baseUrl,
+            });
+            console.log(baseUrl, response.data);
+            dispatch(setAuthUserPost(response.data));
           } catch (error) {
             console.log(error);
           }
         };
 
-        createUserPost();
-        fetchUserPosts();
-        navigation.goBack();
+        await createUserPost();
+        await fetchUserPosts();
+        navigation.pop();
       }}
       validationSchema={uploadPostSchema}
       validateOnMount={true}
@@ -130,7 +124,9 @@ const FormikPostUploader = ({ navigation }: { navigation: any }) => {
           <ButtonLogin
             onPress={handleSubmit}
             titleStyle={{ color: GlobalColors[GlobalMode].text.grayText }}
-            buttonStyle={{ backgroundColor: GlobalColors[GlobalMode].primary.white }}
+            buttonStyle={{
+              backgroundColor: GlobalColors[GlobalMode].primary.white,
+            }}
             title="share"
           />
         </>

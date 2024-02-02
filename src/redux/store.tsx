@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./auth/reducer";
 import { thunk } from "redux-thunk";
 import { composeWithDevTools } from "remote-redux-devtools";
+import logger from "redux-logger";
 // Root State
 export type RootState = ReturnType<typeof authReducer>;
 
@@ -16,7 +17,7 @@ composeWithDevTools({
 // Store
 const store = configureStore({
   reducer: authReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk), //concat(logger) for logging
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger).concat(thunk), //concat(logger) for logging
   devTools: {
     name: "redux store",
   },

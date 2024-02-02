@@ -85,7 +85,7 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
         <Divider width={1} orientation="vertical" />
       </Animated.View>
       <View style={styles.postContainer}>
-        <ScrollView contentContainerStyle={styles.scrollViewContent} onScroll={handleScroll} scrollEventThrottle={16}>
+        <ScrollView style={{}} contentContainerStyle={styles.scrollViewContent} onScroll={handleScroll} scrollEventThrottle={16}>
           {userPosts.map((post, index) => (
             <View key={index}>
               <Post post={post} navigation={navigation} videoInView={videoInView} />
@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     paddingTop: HEADER_HEIGHT,
+    flexDirection: "column-reverse",
   },
   skeletonContainer: {
     flex: 1,

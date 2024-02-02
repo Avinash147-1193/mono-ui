@@ -59,8 +59,8 @@ export const fetchUserProfile = async (dispatch: any, token: string | null) => {
 
 export const fetchUserPosts = async (dispatch: any, token: string | null) => {
   try {
-    const baseUrl = `${API[CURRENT_STATE]}${API.USER.post}`;
-    console.log(baseUrl);
+    const baseUrl = `${API[CURRENT_STATE]}${API.USER.post}?page=1&pageSize=6`;
+    console.log("--axios-call", baseUrl);
     axios
       .request({
         headers: {
@@ -70,7 +70,6 @@ export const fetchUserPosts = async (dispatch: any, token: string | null) => {
         url: baseUrl,
       })
       .then((res) => {
-        console.log(baseUrl);
         dispatch(setAuthUserPost(res.data));
       })
       .catch((error) => console.log(error));
