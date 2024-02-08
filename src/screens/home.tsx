@@ -1,14 +1,13 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
-import { View, SafeAreaView, StyleSheet, Animated, Platform, Dimensions, ScrollView } from "react-native";
+import React, { useRef, useState, memo, useEffect } from "react";
+import { View, SafeAreaView, StyleSheet, Animated, Platform, FlatList, ActivityIndicator } from "react-native";
 import Header from "../components/home/Header";
 import { GlobalColors, GlobalMode } from "../constants/GlobalColors";
 import BottomTabs, { bottomTabIcon } from "../components/home/BottomTabs";
 import { useDispatch, useSelector } from "react-redux";
 import { Divider } from "react-native-elements";
-import SkeletonLoader from "../components/loaders/Post/SkeletonLoader";
 import { Platforms } from "../constants/Common";
 import { RootState } from "../redux/store";
-import { fetchUserPosts, fetchUserProfile } from "../helper/auth/auth";
+import { fetchInfiniteUserPosts } from "../helper/auth/auth";
 import Post from "../components/home/Post";
 
 const HEADER_HEIGHT = 50;
@@ -16,50 +15,68 @@ const marginTop = Platform.OS === Platforms.ANDROID ? 19 : 0;
 
 const HomeScreen = ({ navigation }: { navigation: any }) => {
   const token = useSelector((state: RootState) => state.data);
-  const userPosts = useSelector((state: RootState) => state.post);
+  const [userPosts, setUserPosts] = useState<any[]>([]);
   const [videoInView] = useState(false);
   const dispatch = useDispatch();
   const scrollY = new Animated.Value(0);
   const headerOpacity = new Animated.Value(1);
   const headerContainerRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 6;
+  const [loading, setLoading] = useState(false);
 
-  useLayoutEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetchUserProfile(dispatch, token);
-        await fetchUserPosts(dispatch, token);
-        //await fetchUserLikedPosts(dispatch, token);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        //setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [dispatch, token]);
-
-  const handleScroll = (event: any) => {
-    const scrollPosition = event.nativeEvent.contentOffset.y;
-    const screenHeight = Dimensions.get("window").height;
-
-    if (scrollPosition > 0 && scrollPosition < screenHeight) {
-      //setVideoInView(true);
-    } else {
-      //setVideoInView(false);
+  const fetchMoreData = async () => {
+    try {
+      setLoading(true);
+      const nextPage = currentPage + 1;
+      const newPosts = await fetchInfiniteUserPosts(dispatch, token, nextPage, pageSize, userPosts || []);
+      setCurrentPage(nextPage);
+      setUserPosts([...userPosts, ...newPosts]);
+      return newPosts;
+    } catch (error) {
+      console.error("Error fetching more data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!userPosts) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.skeletonContainer}>
-          <SkeletonLoader />
-          <SkeletonLoader />
-        </View>
-      </SafeAreaView>
-    );
-  }
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        setLoading(true);
+        const newPosts = await fetchInfiniteUserPosts(dispatch, token, currentPage, pageSize, userPosts || []);
+        console.log("-------------loaded     ", newPosts, "-----token", token);
+        setUserPosts(newPosts);
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, [token]);
+
+  // Empty dependency array ensures this effect runs once when the component mounts
+
+  const renderFooter = () => {
+    if (loading) {
+      return null;
+    }
+
+    return <ActivityIndicator style={{ marginVertical: 20 }} size="large" color={GlobalColors[GlobalMode].primary.black} />;
+  };
+
+  // if (loading || !userPosts) {
+  //   return (
+  //     <SafeAreaView style={styles.container}>
+  //       <View style={styles.skeletonContainer}>
+  //         <SkeletonLoader />
+  //         <SkeletonLoader />
+  //       </View>
+  //     </SafeAreaView>
+  //   );
+  // }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -85,13 +102,14 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
         <Divider width={1} orientation="vertical" />
       </Animated.View>
       <View style={styles.postContainer}>
-        <ScrollView style={{}} contentContainerStyle={styles.scrollViewContent} onScroll={handleScroll} scrollEventThrottle={16}>
-          {userPosts.map((post, index) => (
-            <View key={index}>
-              <Post post={post} navigation={navigation} videoInView={videoInView} />
-            </View>
-          ))}
-        </ScrollView>
+        <FlatList
+          onEndReached={fetchMoreData}
+          onEndReachedThreshold={0.5}
+          data={userPosts}
+          ListFooterComponent={renderFooter}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => <Post post={item} navigation={navigation} videoInView={videoInView} />}
+        />
       </View>
       <BottomTabs icons={bottomTabIcon} />
     </SafeAreaView>
@@ -128,4 +146,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default memo(HomeScreen);

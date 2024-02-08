@@ -1,6 +1,6 @@
-import React, { useState, useRef } from "react";
-import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
-import Constants from "expo-constants";
+import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+// import Constants from "expo-constants";
 import PostHeader from "../post/header";
 import PostImage from "../post/postMedia";
 import PostReactions from "../post/postReactions";
@@ -9,42 +9,40 @@ import { GlobalColors, GlobalMode } from "../../constants/GlobalColors";
 import { POSTS } from "../.../../../../data/Posts";
 
 const Post = (post: { [key: string]: any }, { navigation }: { navigation: any }) => {
-  const scrollViewRef = useRef(null);
-  const [videoInView, setVideoInView] = useState(false);
-  const [likesCount, setLikesCount] = useState(post.post.reactions.LIKES);
-  const handleScroll = (event: any) => {
-    const scrollPosition = event.nativeEvent.contentOffset.y;
-    const screenHeight = Dimensions.get("window").height - Constants.statusBarHeight;
-    const isVideoInView = scrollPosition > 0 && scrollPosition < screenHeight;
-
-    setVideoInView(isVideoInView || videoInView);
-  };
+  // const [videoInView, setVideoInView] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.post?.likes?.length || 0);
+  // const handleScroll = (event: any) => {
+  //   const scrollPosition = event.nativeEvent.contentOffset.y;
+  //   const screenHeight = Dimensions.get("window").height - Constants.statusBarHeight;
+  //   const isVideoInView = scrollPosition > 0 && scrollPosition < screenHeight;
+  //   setVideoInView(isVideoInView || videoInView);
+  // };
   return (
     <View style={{ marginBottom: 30 }}>
       <PostHeader post={post.post} />
-      <ScrollView ref={scrollViewRef} onScroll={handleScroll} scrollEventThrottle={16}>
-        <PostImage
-          post={post.post}
-          // scrollViewRef={scrollViewRef}
-          // videoInView={videoInView}
-          // setVideoInView={setVideoInView}
-        />
-        <View style={{ marginHorizontal: 15, marginTop: 10 }}>
-          <PostReactions post={post.post} navigation={navigation} setLikesCount={setLikesCount} likesCount={likesCount} />
-          <Likes likesCount={likesCount} />
-          <Caption post={post.post} />
-          <CommentSection post={post.post} />
-          <Comments />
-          <Divider width={1} orientation="vertical" style={styles.divider} />
-        </View>
-      </ScrollView>
+      <PostImage post={post.post} />
+      <View style={{ marginHorizontal: 15, marginTop: 10 }}>
+        <PostReactions post={post.post} navigation={navigation} setLikesCount={setLikesCount} likesCount={likesCount} />
+        <Likes likesCount={likesCount} />
+        <Caption post={post.post} />
+        <CommentSection post={post.post} />
+        <Comments />
+        <Divider width={1} orientation="vertical" style={styles.divider} />
+      </View>
     </View>
   );
 };
 
 const Likes = (likesCount: any) => (
   <View style={{ flexDirection: "row", marginTop: 4 }}>
-    <Text style={{ color: GlobalColors[GlobalMode].text.postText, fontWeight: "600" }}>{likesCount.likesCount} likes</Text>
+    <Text
+      style={{
+        color: GlobalColors[GlobalMode].text.postText,
+        fontWeight: "600",
+      }}
+    >
+      {likesCount.likesCount} likes
+    </Text>
   </View>
 );
 
@@ -59,7 +57,7 @@ const Caption = (post: any) => (
 
 const CommentSection = (post: any) => (
   <View style={{ marginTop: 5 }}>
-    {!!post.post.comments.length && (
+    {post.comments && !!post.comments.length && (
       <Text style={{ color: GlobalColors[GlobalMode].text.postText }}>
         {post.comments.length > 1 ? " all" : ""} {post.post.comments.length}
         {post.comments.length > 1 ? " comments" : " comment"}

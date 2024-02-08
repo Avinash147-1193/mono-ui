@@ -52,7 +52,7 @@ const PostHeader: React.FC<PostHeaderProps> = ({ post }) => {
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <Image source={{ uri: post.user.profile.display.profilePictures[0].imgUrl }} style={styles.story} />
+        <Image source={{ uri: post.user?.profile?.display.profilePictures[0].imgUrl || "" }} style={styles.story} />
         <Text
           style={{
             color: GlobalColors[GlobalMode].text.postText,
@@ -60,7 +60,7 @@ const PostHeader: React.FC<PostHeaderProps> = ({ post }) => {
             fontWeight: "700",
           }}
         >
-          {post.user.firstName} {post.user.lastName}
+          {post?.user?.firstName || ""} {post?.user?.lastName || ""}
         </Text>
       </View>
       <TouchableOpacity>

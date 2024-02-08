@@ -28,6 +28,9 @@ export const handleLogin = async (
       })
       .then((res) => {
         dispatch(loginUser(res.data.access_token));
+        fetchUserProfile(dispatch, res.data.access_token);
+        //fetchUserPosts(dispatch, res.data.access_token, 1, 7);
+        //fetchUserLikedPosts(dispatch, res.data.access_token);
         if (res.data.access_token) navigation.push("HomeScreen");
       })
       .catch(() => setValidationError("Invalid password"));
@@ -57,9 +60,9 @@ export const fetchUserProfile = async (dispatch: any, token: string | null) => {
   }
 };
 
-export const fetchUserPosts = async (dispatch: any, token: string | null) => {
+export const fetchUserPosts = async (dispatch: any, token: string | null, page: number, pageSize: number, userPost: [] = []) => {
   try {
-    const baseUrl = `${API[CURRENT_STATE]}${API.USER.post}?page=1&pageSize=6`;
+    const baseUrl = `${API[CURRENT_STATE]}${API.USER.post}?page=${page}&pageSize=${pageSize}`;
     console.log("--axios-call", baseUrl);
     axios
       .request({
@@ -69,12 +72,32 @@ export const fetchUserPosts = async (dispatch: any, token: string | null) => {
         method: "GET",
         url: baseUrl,
       })
-      .then((res) => {
-        dispatch(setAuthUserPost(res.data));
+      .then(async (res) => {
+        if (res.data) userPost.length <= 0 ? dispatch(setAuthUserPost(res.data)) : dispatch(setAuthUserPost([...userPost, res.data]));
+        return await res.data;
       })
       .catch((error) => console.log(error));
+    return [];
   } catch (error) {
     throw new Error(`error: ${error}`);
+  }
+};
+
+export const fetchInfiniteUserPosts = async (dispatch: any, token: string | null, page: number, pageSize: number, userPost: any[] = []) => {
+  try {
+    const baseUrl = `${API[CURRENT_STATE]}${API.USER.post}?page=${page}&pageSize=${pageSize}`;
+    console.log("--axios-call", baseUrl);
+    const response = await axios.get(baseUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const newPosts = response.data;
+    dispatch(setAuthUserPost([...userPost, ...newPosts]));
+    return newPosts;
+  } catch (error) {
+    console.error(`Error: ${error}`);
+    return [];
   }
 };
 

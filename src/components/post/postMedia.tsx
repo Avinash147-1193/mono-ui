@@ -5,8 +5,8 @@ import { Video } from "expo-av";
 interface PostImageProps {
   post: {
     media: {
-      images: [string: any];
-      videos: [string: any];
+      images: [key: { imgUrl: string }];
+      videos: [string: { videoUrl: string }];
     };
   };
   scrollViewRef?: string;
@@ -14,7 +14,9 @@ interface PostImageProps {
 
 const PostImage: React.FC<PostImageProps> = ({ post }) => {
   const [videoInView] = useState<boolean>(false);
-  const postImages = post?.media?.images[0]?.imgUrl;
+  const postImages =
+    post?.media?.images[0]?.imgUrl ||
+    "https://img.freepik.com/free-vector/illustration-gallery-icon_53876-27002.jpg?size=626&ext=jpg&ga=GA1.1.1448711260.1707004800&semt=sph";
 
   if (postImages.endsWith(".mp4")) {
     return (
