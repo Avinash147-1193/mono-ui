@@ -9,6 +9,7 @@ import { Platforms } from "../constants/Common";
 import { RootState } from "../redux/store";
 import { fetchInfiniteUserPosts } from "../helper/auth/auth";
 import Post from "../components/home/Post";
+import SkeletonLoader from "../components/loaders/Post/SkeletonLoader";
 
 const HEADER_HEIGHT = 50;
 const marginTop = Platform.OS === Platforms.ANDROID ? 19 : 0;
@@ -27,12 +28,20 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
 
   const fetchMoreData = async () => {
     try {
+      if (loading) {
+        return;
+      }
       setLoading(true);
       const nextPage = currentPage + 1;
       const newPosts = await fetchInfiniteUserPosts(dispatch, token, nextPage, pageSize, userPosts || []);
-      setCurrentPage(nextPage);
-      setUserPosts([...userPosts, ...newPosts]);
-      return newPosts;
+      if (newPosts.length > 0) {
+        setCurrentPage(nextPage);
+        setUserPosts([...userPosts, ...newPosts]);
+        setLoading(false);
+      } else {
+        setCurrentPage(1);
+      }
+      //return newPosts;
     } catch (error) {
       console.error("Error fetching more data:", error);
     } finally {
@@ -45,7 +54,6 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
       try {
         setLoading(true);
         const newPosts = await fetchInfiniteUserPosts(dispatch, token, currentPage, pageSize, userPosts || []);
-        console.log("-------------loaded     ", newPosts, "-----token", token);
         setUserPosts(newPosts);
       } catch (error) {
         console.error("Error fetching initial data:", error);
@@ -57,8 +65,6 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
     fetchInitialData();
   }, [token]);
 
-  // Empty dependency array ensures this effect runs once when the component mounts
-
   const renderFooter = () => {
     if (loading) {
       return null;
@@ -67,16 +73,16 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
     return <ActivityIndicator style={{ marginVertical: 20 }} size="large" color={GlobalColors[GlobalMode].primary.black} />;
   };
 
-  // if (loading || !userPosts) {
-  //   return (
-  //     <SafeAreaView style={styles.container}>
-  //       <View style={styles.skeletonContainer}>
-  //         <SkeletonLoader />
-  //         <SkeletonLoader />
-  //       </View>
-  //     </SafeAreaView>
-  //   );
-  // }
+  if (!userPosts) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.skeletonContainer}>
+          <SkeletonLoader />
+          <SkeletonLoader />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -104,7 +110,7 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
       <View style={styles.postContainer}>
         <FlatList
           onEndReached={fetchMoreData}
-          onEndReachedThreshold={0.5}
+          onEndReachedThreshold={2.6}
           data={userPosts}
           ListFooterComponent={renderFooter}
           keyExtractor={(item, index) => index.toString()}

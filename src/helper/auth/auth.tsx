@@ -83,18 +83,25 @@ export const fetchUserPosts = async (dispatch: any, token: string | null, page: 
   }
 };
 
+let isFetching = false;
 export const fetchInfiniteUserPosts = async (dispatch: any, token: string | null, page: number, pageSize: number, userPost: any[] = []) => {
   try {
     const baseUrl = `${API[CURRENT_STATE]}${API.USER.post}?page=${page}&pageSize=${pageSize}`;
     console.log("--axios-call", baseUrl);
+    if (isFetching) {
+      console.log("Already fetching posts...");
+      return [];
+    }
+
+    isFetching = true;
     const response = await axios.get(baseUrl, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     const newPosts = response.data;
-    dispatch(setAuthUserPost([...userPost, ...newPosts]));
-    return newPosts;
+    isFetching = false;
+    return [...userPost, ...newPosts];
   } catch (error) {
     console.error(`Error: ${error}`);
     return [];
