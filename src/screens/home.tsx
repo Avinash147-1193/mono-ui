@@ -2,7 +2,6 @@ import React, { useRef, useState, memo, useEffect } from "react";
 import { View, SafeAreaView, StyleSheet, Animated, Platform, FlatList, ActivityIndicator } from "react-native";
 import Header from "../components/home/Header";
 import { GlobalColors, GlobalMode } from "../constants/GlobalColors";
-import BottomTabs, { bottomTabIcon } from "../components/home/BottomTabs";
 import { useDispatch, useSelector } from "react-redux";
 import { Divider } from "react-native-elements";
 import { Platforms } from "../constants/Common";
@@ -12,7 +11,7 @@ import Post from "../components/home/Post";
 import SkeletonLoader from "../components/loaders/Post/SkeletonLoader";
 
 const HEADER_HEIGHT = 50;
-const marginTop = Platform.OS === Platforms.ANDROID ? 19 : 0;
+const marginTop = Platform.OS === Platforms.ANDROID ? 19 : 42;
 
 const HomeScreen = ({ navigation }: { navigation: any }) => {
   const token = useSelector((state: RootState) => state.data);
@@ -117,7 +116,6 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
           renderItem={({ item }) => <Post post={item} navigation={navigation} videoInView={videoInView} />}
         />
       </View>
-      <BottomTabs icons={bottomTabIcon} />
     </SafeAreaView>
   );
 };

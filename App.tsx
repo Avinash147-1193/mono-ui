@@ -1,14 +1,19 @@
+// Import necessary libraries
+import * as React from "react";
+import SelectedStack from "./navigation";
 import { Provider } from "react-redux";
-import StackNavigation from "./navigation";
-import React from "react";
 import store from "./src/redux/store";
 
-export default function App() {
+const App: React.FC = () => {
+  // You can implement your authentication logic here to set the 'authenticated' state
+
   return (
     <>
       <Provider store={store}>
-        <StackNavigation />
+        <SelectedStack />
       </Provider>
     </>
   );
-}
+};
+
+export default App;

@@ -12,7 +12,7 @@ const Header = ({ navigation }: { navigation: any }) => {
       </TouchableOpacity>
 
       <View style={styles.iconsContainer}>
-        <TouchableOpacity onPress={() => navigation.push("NewPostScreen")}>
+        <TouchableOpacity onPress={() => navigation.push("NewPost")}>
           <Image style={styles.icon} source={require("../../../assets/post.png")}></Image>
         </TouchableOpacity>
         <TouchableOpacity>

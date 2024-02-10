@@ -6,10 +6,7 @@ import { Formik } from "formik";
 import { GlobalColors, GlobalMode } from "../../constants/GlobalColors";
 import axios from "axios";
 import { API, CURRENT_STATE } from "../../constants/GlobalAPI";
-import { useSelector, useDispatch } from "react-redux";
-import { AuthActionTypes, setAuthUserPost } from "../../redux/auth/action";
-import { ThunkDispatch } from "redux-thunk";
-import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 import ButtonLogin from "../buttons/buttonLogin";
 
 const SERVER_STATE = CURRENT_STATE;
@@ -24,7 +21,7 @@ const uploadPostSchema = Yup.object().shape({
 const FormikPostUploader = ({ navigation }: { navigation: any }) => {
   const user = useSelector((state: any) => state.data);
   const [thumbnailUrl, setThumbnailUrl] = useState(PLACEHOLDER_IMG);
-  const dispatch = useDispatch<ThunkDispatch<RootState, unknown, AuthActionTypes>>();
+  // const [createdPost, setCreatedPost] = useState([]);
 
   return (
     <Formik
@@ -53,6 +50,9 @@ const FormikPostUploader = ({ navigation }: { navigation: any }) => {
               },
             });
             console.log(baseUrl, response.data);
+            // if (response.data) {
+            //   setCreatedPost(response.data);
+            // }
           } catch (error) {
             console.log(error);
           }
@@ -69,7 +69,6 @@ const FormikPostUploader = ({ navigation }: { navigation: any }) => {
               url: baseUrl,
             });
             console.log(baseUrl, response.data);
-            dispatch(setAuthUserPost(response.data));
           } catch (error) {
             console.log(error);
           }

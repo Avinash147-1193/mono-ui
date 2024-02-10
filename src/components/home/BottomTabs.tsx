@@ -1,49 +1,59 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Image, TouchableOpacity, Platform } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, Image, TouchableOpacity, Platform, ImageSourcePropType } from "react-native";
 import { Divider } from "react-native-elements";
 import { GlobalColors, GlobalMode } from "../../constants/GlobalColors";
+import { Icon } from "react-native-elements";
 
 const height = Platform.OS === "android" ? 50 : 65;
 
-interface Icon {
+export interface Icon {
   name: string;
-  inactive: string;
-  active: string;
+  inactive: ImageSourcePropType;
+  active: ImageSourcePropType;
 }
 
 interface BottomTabsProps {
   icons: Icon[];
 }
 
-export const bottomTabIcon = [
+export const bottomTabIcon: Icon[] = [
   {
     name: "Home",
-    inactive: "https://img.icons8.com/material-outlined/100/home--v2.png",
-    active: "https://img.icons8.com/ios-filled/100/home.png",
+    inactive: require("../../../assets/home--v2.png"),
+    active: require("../../../assets/home.png"),
   },
   {
     name: "Search",
-    inactive: "https://img.icons8.com/material-outlined/100/search--v1.png",
-    active: "https://img.icons8.com/ios-filled/100/search--v1.png",
+    inactive: require("../../../assets/search--v1.png"),
+    active: require("../../../assets/search--v1-black.png"),
   },
   {
     name: "Reels",
-    inactive: "https://img.icons8.com/material-outlined/100/lawyer.png",
-    active: "https://img.icons8.com/material/100/lawyer.png",
+    inactive: require("../../../assets/lawyer.png"),
+    active: require("../../../assets/lawyer-black.png"),
   },
   {
     name: "Shop",
-    inactive: "https://img.icons8.com/material-outlined/100/user-male-circle.png",
-    active: "https://img.icons8.com/ios-filled/100/user-male-circle.png",
+    inactive: require("../../../assets/user-male-circle.png"),
+    active: require("../../../assets/user-male-circle-black.png"),
   },
 ];
 
-const BottomTabs: React.FC<BottomTabsProps> = ({ icons }) => {
+const BottomTabs: React.FC<BottomTabsProps> = () => {
   const [activeTab, setActiveTab] = useState("Home");
+  const [activeImages, setActiveImages] = useState<{ [key: string]: ImageSourcePropType }>({});
+
+  useEffect(() => {
+    const newActiveImages: { [key: string]: ImageSourcePropType } = {};
+    bottomTabIcon.forEach((icon) => {
+      newActiveImages[icon.name] = activeTab === icon.name ? icon.active : icon.inactive;
+    });
+    setActiveImages(newActiveImages);
+  }, [activeTab, bottomTabIcon]);
 
   const Icon: React.FC<{ icon: Icon }> = ({ icon }) => (
     <TouchableOpacity onPress={() => setActiveTab(icon.name)}>
-      <Image source={{ uri: activeTab === icon.name ? icon.active : icon.inactive }} style={styles.icon} />
+      <Image source={activeImages[icon.name]} style={styles.icon} />
     </TouchableOpacity>
   );
 
@@ -51,7 +61,7 @@ const BottomTabs: React.FC<BottomTabsProps> = ({ icons }) => {
     <View style={styles.wrapper}>
       <Divider width={1} orientation="vertical" />
       <View style={styles.container}>
-        {icons.map((icon, index) => (
+        {bottomTabIcon.map((icon, index) => (
           <Icon key={index} icon={icon} />
         ))}
       </View>
@@ -75,9 +85,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     height: 50,
     marginTop: 5,
+    position: "relative",
   },
   icon: {
     width: 27,
     height: 27,
+  },
+  tabBar: {
+    position: "absolute",
+    bottom: 0,
+    height: 2,
+    width: `${100 / bottomTabIcon.length}%`,
+    backgroundColor: "white",
+    borderRadius: 2,
   },
 });

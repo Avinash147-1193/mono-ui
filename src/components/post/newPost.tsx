@@ -15,7 +15,7 @@ const AddNewPost = ({ navigation }: { navigation: any }) => {
 const Header = ({ navigation }: { navigation: any }) => (
   <View style={styles.headerContainer}>
     <TouchableOpacity onPress={() => navigation.goBack()}>
-      <Image source={{ uri: "https://img.icons8.com/ios-glyphs/30/FFFFFF/back.png" }} style={{ width: 30, height: 30 }} />
+      <Image source={require("../../../assets/back.png")} style={{ width: 30, height: 30 }} />
     </TouchableOpacity>
     <Text style={styles.headerText}>NEW POST</Text>
     <Text></Text>

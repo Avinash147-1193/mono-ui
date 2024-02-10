@@ -31,9 +31,9 @@ export const handleLogin = async (
         fetchUserProfile(dispatch, res.data.access_token);
         //fetchUserPosts(dispatch, res.data.access_token, 1, 7);
         //fetchUserLikedPosts(dispatch, res.data.access_token);
-        if (res.data.access_token) navigation.push("HomeScreen");
+        if (res.data.access_token) navigation.navigate("Home", {});
       })
-      .catch(() => setValidationError("Invalid password"));
+      .catch((error) => console.log(error));
   } catch (error) {
     throw new Error(`error: ${error}`);
   }
@@ -99,7 +99,7 @@ export const fetchInfiniteUserPosts = async (dispatch: any, token: string | null
         Authorization: `Bearer ${token}`,
       },
     });
-    const newPosts = response.data;
+    const newPosts = response.data.reverse();
     isFetching = false;
     return [...userPost, ...newPosts];
   } catch (error) {
