@@ -4,7 +4,8 @@ import { GlobalColors, GlobalMode } from "../../constants/GlobalColors";
 import { Platforms } from "../../constants/Common";
 const paddingTop = Platform.OS === Platforms.ANDROID ? 20 : 35;
 
-const Header = ({ navigation }: { navigation: any }) => {
+//{ navigation }: { navigation: any }
+const Header = ({}: { navigation: any }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity>
@@ -12,11 +13,11 @@ const Header = ({ navigation }: { navigation: any }) => {
       </TouchableOpacity>
 
       <View style={styles.iconsContainer}>
-        <TouchableOpacity onPress={() => navigation.push("NewPost")}>
+        {/* <TouchableOpacity onPress={() => navigation.push("NewPost")}>
           <Image style={styles.icon} source={require("../../../assets/post.png")}></Image>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity>
-          <Image style={styles.icon} source={require("../../../assets/like.png")}></Image>
+          <Image style={styles.icon} source={require("../../../assets/bell-notification.png")}></Image>
         </TouchableOpacity>
         <TouchableOpacity>
           <View style={styles.unreadBadge}>
@@ -38,9 +39,8 @@ const styles = StyleSheet.create({
     backgroundColor: GlobalColors[GlobalMode].primary.black,
   },
   logo: {
-    width: 110,
+    width: 100,
     height: 55,
-    resizeMode: "contain",
   },
   iconsContainer: {
     flexDirection: "row",

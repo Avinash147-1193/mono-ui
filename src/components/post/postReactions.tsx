@@ -17,20 +17,20 @@ interface PostReactionsProps {
 const postFooterIcons = [
   {
     name: "Like",
-    imageUrl: "https://img.icons8.com/ios/50/000000/facebook-like--v1.png",
-    likedImageUrl: "https://img.icons8.com/ios-filled/50/facebook-like.png",
+    likedImageUrl: require("../../../assets/liked.png"),
+    imageUrl: require("../../../assets/like.png"),
   },
   {
     name: "Comment",
-    imageUrl: "https://img.icons8.com/ios/50/comments--v1.png",
+    imageUrl: require("../../../assets/comments.png"),
   },
   {
     name: "Share",
-    imageUrl: "https://img.icons8.com/ios/50/right2.png",
+    imageUrl: require("../../../assets/share.png"),
   },
   {
-    name: "Save",
-    imageUrl: "https://img.icons8.com/ios/50/add-bookmark.png",
+    name: "Send",
+    imageUrl: require("../../../assets/send.png"),
   },
 ];
 
@@ -49,42 +49,43 @@ const PostReactions: React.FC<PostReactionsProps> = ({ post, navigation, setLike
   return (
     <View style={{ flexDirection: "row" }}>
       <View style={styles.leftFooterIconsContainer}>
-        <Icon
-          imageStyle={styles.footerIcon}
-          onPress={() => HandleLike(post, setLikesCount, setLike, like, token, likesCount)}
-          imgUrl={like == 1 ? postFooterIcons[0].likedImageUrl : postFooterIcons[0].imageUrl}
-        />
-        <Icon
-          imageStyle={styles.footerIcon}
-          onPress={() => navigation.push("CommentScreen", { postDetails: post })}
-          imgUrl={postFooterIcons[1].imageUrl}
-        />
-        <Icon imageStyle={styles.footerIcon} onPress={() => console.log("-------share-------")} imgUrl={postFooterIcons[2].imageUrl} />
+        <TouchableOpacity onPress={() => HandleLike(post, setLikesCount, setLike, like, token, likesCount)}>
+          <Image style={styles.footerIcon} source={like == 1 ? postFooterIcons[0].likedImageUrl : postFooterIcons[0].imageUrl} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.push("CommentScreen", { postDetails: post })}>
+          <Image style={styles.footerIcon} source={postFooterIcons[1].imageUrl} />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => console.log("====share")}>
+          <Image style={styles.footerIcon} source={postFooterIcons[2].imageUrl} />
+        </TouchableOpacity>
       </View>
       <View style={{ flex: 1, alignItems: "flex-end" }}>
-        <Icon imageStyle={styles.footerIcon} onPress={() => console.log("-------save-------")} imgUrl={postFooterIcons[3].imageUrl} />
+        <TouchableOpacity onPress={() => console.log("====send")}>
+          <Image style={styles.footerIcon} source={postFooterIcons[3].imageUrl} />
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-const Icon: React.FC<{
-  imageStyle: any;
-  imgUrl: string | undefined;
-  onPress: () => void;
-}> = ({ imageStyle, imgUrl, onPress }) => (
-  <TouchableOpacity onPress={onPress}>
-    <Image style={imageStyle} source={{ uri: imgUrl }} />
-  </TouchableOpacity>
-);
+// const Icon: React.FC<{
+//   imageStyle: any;
+//   imgUrl: string | undefined;
+//   onPress: () => void;
+// }> = ({ imageStyle, imgUrl, onPress }) => (
+//   <TouchableOpacity onPress={onPress}>
+//     <Image style={imageStyle} source={{ uri: imgUrl }} />
+//   </TouchableOpacity>
+// );
 
 export default PostReactions;
 
 const styles = StyleSheet.create({
   footerIcon: {
-    width: 25,
-    height: 25,
-    margin: 5,
+    width: 27,
+    height: 27,
+    marginTop: -9,
   },
   leftFooterIconsContainer: {
     flexDirection: "row",

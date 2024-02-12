@@ -4,9 +4,7 @@ import SelectedStack from "./navigation";
 import { Provider } from "react-redux";
 import store from "./src/redux/store";
 
-const App: React.FC = () => {
-  // You can implement your authentication logic here to set the 'authenticated' state
-
+export default function App() {
   return (
     <>
       <Provider store={store}>
@@ -14,6 +12,4 @@ const App: React.FC = () => {
       </Provider>
     </>
   );
-};
-
-export default App;
+}

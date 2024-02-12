@@ -28,6 +28,11 @@ export const bottomTabIcon: Icon[] = [
     active: require("../../../assets/search--v1-black.png"),
   },
   {
+    name: "Create Post",
+    active: require("../../../assets/new-post-dark.png"),
+    inactive: require("../../../assets/NewPost.png"),
+  },
+  {
     name: "Reels",
     inactive: require("../../../assets/lawyer.png"),
     active: require("../../../assets/lawyer-black.png"),

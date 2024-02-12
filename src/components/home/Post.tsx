@@ -1,32 +1,46 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-// import Constants from "expo-constants";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, View, UIManager, Platform, LayoutAnimation } from "react-native";
 import PostHeader from "../post/header";
 import PostImage from "../post/postMedia";
 import PostReactions from "../post/postReactions";
 import { Divider } from "react-native-elements";
 import { GlobalColors, GlobalMode } from "../../constants/GlobalColors";
-import { POSTS } from "../.../../../../data/Posts";
+import { Platforms } from "../../constants/Common";
+
+if (Platform.OS === Platforms.ANDROID) {
+  UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+interface Post {
+  _id: string;
+  caption: string;
+}
+
+interface PostProps {
+  post?: Post;
+  navigation?: any;
+  setLikesCount?: (count: number) => void;
+  likesCount?: number;
+}
 
 const Post = (post: { [key: string]: any }, { navigation }: { navigation: any }) => {
-  // const [videoInView, setVideoInView] = useState(false);
   const [likesCount, setLikesCount] = useState(post.post?.likes?.length || 0);
-  // const handleScroll = (event: any) => {
-  //   const scrollPosition = event.nativeEvent.contentOffset.y;
-  //   const screenHeight = Dimensions.get("window").height - Constants.statusBarHeight;
-  //   const isVideoInView = scrollPosition > 0 && scrollPosition < screenHeight;
-  //   setVideoInView(isVideoInView || videoInView);
+  const commentsCount = post.post?.comments?.length || 0;
+  const sharesCount = post.post?.shares || 0;
   // };
   return (
     <View style={{ marginBottom: 30 }}>
       <PostHeader post={post.post} />
+      <Caption post={post.post} />
       <PostImage post={post.post} />
-      <View style={{ marginHorizontal: 15, marginTop: 10 }}>
+      <View style={{ marginHorizontal: 15 }}>
         <PostReactions post={post.post} navigation={navigation} setLikesCount={setLikesCount} likesCount={likesCount} />
-        <Likes likesCount={likesCount} />
-        <Caption post={post.post} />
+        <View style={{ flexDirection: "row" }}>
+          <Likes likesCount={likesCount} />
+          <CommentsCount commentsCount={commentsCount} />
+          <Shares sharesCount={sharesCount} />
+        </View>
         <CommentSection post={post.post} />
-        <Comments />
+        <Comments post={post.post} />
         <Divider width={1} orientation="vertical" style={styles.divider} />
       </View>
     </View>
@@ -38,7 +52,7 @@ const Likes = (likesCount: any) => (
     <Text
       style={{
         color: GlobalColors[GlobalMode].text.postText,
-        fontWeight: "600",
+        fontWeight: "500",
       }}
     >
       {likesCount.likesCount} likes
@@ -46,14 +60,71 @@ const Likes = (likesCount: any) => (
   </View>
 );
 
-const Caption = (post: any) => (
-  <View style={{ marginTop: 5 }}>
-    <Text style={{ color: GlobalColors[GlobalMode].text.postText }}>
-      <Text>{POSTS[0].user}</Text>
-      <Text> {post.caption}</Text>
+const CommentsCount = (commentsCount: any) => (
+  <View style={{ flexDirection: "row", marginTop: 4, marginLeft: 7 }}>
+    <Text
+      style={{
+        color: GlobalColors[GlobalMode].text.postText,
+        fontWeight: "500",
+      }}
+    >
+      {commentsCount.commentsCount} comments
     </Text>
   </View>
 );
+
+const Shares = (sharesCount: any) => (
+  <View style={{ flexDirection: "row", marginTop: 4, marginLeft: 7 }}>
+    <Text
+      style={{
+        color: GlobalColors[GlobalMode].text.postText,
+        fontWeight: "500",
+      }}
+    >
+      {sharesCount.sharesCount} reFeeds
+    </Text>
+  </View>
+);
+
+const Caption: React.FC<PostProps> = ({ post }) => {
+  const [showFullCaption, setShowFullCaption] = useState(false);
+  const [captionHeight, setCaptionHeight] = useState(50);
+
+  const captionCollapsedLength = 30;
+
+  useEffect(() => {
+    animateHeight(showFullCaption ? post?.caption.length || 0 : captionCollapsedLength);
+  }, [showFullCaption]);
+
+  const toggleCaptionVisibility = () => {
+    setShowFullCaption(!showFullCaption);
+  };
+
+  const animateHeight = (toValue: number) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setCaptionHeight(toValue);
+  };
+
+  return (
+    <View>
+      <ScrollView>
+        <Text style={{ color: GlobalColors[GlobalMode].text.postText, margin: 7, height: captionHeight }}>
+          {showFullCaption ? post?.caption : `${post?.caption.slice(0, captionCollapsedLength)}... `}
+          {!showFullCaption && post?.caption && post.caption.length > captionCollapsedLength && (
+            <Text style={{ color: GlobalColors[GlobalMode].text.grayText }} onPress={toggleCaptionVisibility}>
+              See more
+            </Text>
+          )}
+          {showFullCaption && (
+            <Text style={{ color: GlobalColors[GlobalMode].text.grayText }} onPress={toggleCaptionVisibility}>
+              See less
+            </Text>
+          )}
+        </Text>
+      </ScrollView>
+    </View>
+  );
+};
 
 const CommentSection = (post: any) => (
   <View style={{ marginTop: 5 }}>
@@ -66,12 +137,14 @@ const CommentSection = (post: any) => (
   </View>
 );
 
-const Comments = () => (
+const Comments = (post: any) => (
   <View style={{ flexDirection: "row", marginTop: 5 }}>
-    <Text style={{ color: GlobalColors[GlobalMode].text.postText }}>
-      <Text style={{ fontWeight: "600" }}>{POSTS[0].comments[0].user}</Text>
-      <Text>{POSTS[0].comments[0].comment}</Text>
-    </Text>
+    {post.comments && post.comments.length > 0 && (
+      <Text style={{ color: GlobalColors[GlobalMode].text.postText }}>
+        <Text style={{ fontWeight: "600" }}>{post.comments[0]?.name}</Text>
+        <Text>{post.comments[0]?.text}</Text>
+      </Text>
+    )}
   </View>
 );
 
@@ -83,6 +156,5 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    backgroundColor: "#fff",
   },
 });

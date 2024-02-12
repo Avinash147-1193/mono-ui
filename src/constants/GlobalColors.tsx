@@ -7,6 +7,9 @@ export const GlobalColors = {
       unreadBadge: "#FF3250",
       realBlack: "black",
       error: "red",
+      gray: "#8FF6F0",
+      primaryBlue: "#6DC7FF",
+      hardBlue: "#1A608A",
     },
     elements: {
       storyBorderColor: "#ff8501",

@@ -1,51 +1,101 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Image } from "react-native";
-import { Video } from "expo-av";
+import React from "react";
+import { StyleSheet, View, Image, Dimensions } from "react-native";
+import Carousel, { Pagination } from "react-native-snap-carousel";
+import { GlobalColors, GlobalMode } from "../../constants/GlobalColors";
 
 interface PostImageProps {
   post: {
     media: {
-      images: [key: { imgUrl: string }];
-      videos: [string: { videoUrl: string }];
+      images: { imgUrl: string }[];
+      videos: { videoUrl: string }[];
     };
   };
-  scrollViewRef?: string;
 }
 
-const PostImage: React.FC<PostImageProps> = ({ post }) => {
-  const [videoInView] = useState<boolean>(false);
-  const postImages =
-    post?.media?.images[0]?.imgUrl ||
-    "https://img.freepik.com/free-vector/illustration-gallery-icon_53876-27002.jpg?size=626&ext=jpg&ga=GA1.1.1448711260.1707004800&semt=sph";
+const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
-  if (postImages.endsWith(".mp4")) {
+const PostImage: React.FC<PostImageProps> = ({ post }) => {
+  const postMedia = post?.media || {};
+  const postImages = postMedia.images || [];
+  const postVideos = postMedia.videos || [];
+  const [activeSlide, setActiveSlide] = React.useState(0);
+
+  const renderItem = ({ item }: { item: { imgUrl?: string; videoUrl?: string }; index: number }) => {
+    if (item.imgUrl) {
+      return (
+        <View style={styles.container}>
+          <Image source={{ uri: item.imgUrl }} style={styles.image} />
+        </View>
+      );
+    } else if (item.videoUrl) {
+      return (
+        <View style={styles.container}>
+          {/* <Video source={{ uri: "https://static.videezy.com/system/resources/previews/000/000/168/original/Record.mp4" }} style={styles.video} resizeMode="cover" /> */}
+        </View>
+      );
+    }
+    return null;
+  };
+
+  const paginationDots = () => {
     return (
-      <View style={styles.container}>
-        <Video source={{ uri: postImages }} style={styles.video} useNativeControls shouldPlay={videoInView} />
-      </View>
+      <Pagination
+        dotsLength={postImages.length + postVideos.length}
+        activeDotIndex={activeSlide}
+        containerStyle={styles.paginationContainer}
+        dotStyle={styles.dotStyle}
+        inactiveDotStyle={styles.inactiveDotStyle}
+        inactiveDotOpacity={0.6}
+        inactiveDotScale={0.8}
+      />
     );
-  } else {
-    return (
-      <View style={styles.container}>
-        <Image source={{ uri: postImages }} style={styles.image} />
-      </View>
-    );
-  }
+  };
+
+  return (
+    <View style={styles.carouselContainer}>
+      {postMedia && postImages.length + postVideos.length > 0 && (
+        <Carousel
+          data={[...postImages, ...postVideos]}
+          renderItem={renderItem}
+          sliderWidth={screenWidth}
+          itemWidth={screenWidth}
+          onBeforeSnapToItem={(index) => setActiveSlide(index)}
+        />
+      )}
+      {paginationDots()}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: 450,
+  carouselContainer: {
+    marginBottom: 10,
   },
-  video: {
-    height: "100%",
-    resizeMode: "cover",
+  container: {
+    width: screenWidth * 0.5, // Adjust the fraction based on your preference
+    height: screenHeight * 0.5, // Adjust the fraction based on your preference
+    aspectRatio: 1,
   },
   image: {
-    height: "100%",
+    flex: 1,
+    width: undefined,
+    height: undefined,
     resizeMode: "cover",
   },
+  video: {
+    flex: 1,
+  },
+  paginationContainer: {
+    paddingVertical: 8,
+  },
+  dotStyle: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 8,
+    backgroundColor: GlobalColors[GlobalMode].primary.black,
+  },
+  inactiveDotStyle: {},
 });
 
 export default PostImage;

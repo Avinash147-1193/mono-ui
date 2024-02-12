@@ -19,7 +19,7 @@ const MainNavigation: React.FC = () => (
   <NavigationContainer>
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused, size }) => {
           const icon: Icon | undefined = bottomTabIcon.find((item: { name: string }) => item.name === route.name);
           console.log("--------icon", icon);
 
@@ -27,7 +27,12 @@ const MainNavigation: React.FC = () => (
             return null;
           }
 
-          return <Image source={focused ? icon.active : icon.inactive} style={{ width: size, height: size, tintColor: color }} />;
+          return (
+            <Image
+              source={focused ? icon.active : icon.inactive}
+              style={{ width: size, height: size, tintColor: GlobalColors[GlobalMode].primary.realBlack }}
+            />
+          );
         },
         tabBarActiveTintColor: GlobalColors[GlobalMode].primary.white,
         tabBarInactiveTintColor: GlobalColors[GlobalMode].primary.realBlack,
@@ -36,17 +41,11 @@ const MainNavigation: React.FC = () => (
         },
       })}
     >
-      <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="Create Post" component={NewPostScreen} options={{ headerShown: false }} />
       {/* Add more bottom tab screens as needed */}
     </Tab.Navigator>
   </NavigationContainer>
-);
-
-const HomeStack = () => (
-  <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Home" component={HomeScreen} />
-    <Stack.Screen name="NewPost" component={NewPostScreen} />
-  </Stack.Navigator>
 );
 
 const AuthStack = () => (

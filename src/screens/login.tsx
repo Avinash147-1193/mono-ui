@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   logo: {
-    width: 225,
+    width: 340,
     height: 189,
     marginBottom: 40,
   },
