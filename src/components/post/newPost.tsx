@@ -5,36 +5,33 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import * as ImagePicker from "expo-image-picker";
 import { UserDisplay } from "./postUserImage";
+import { uploadFile } from "../../helper/post/postAttibutes";
 
 const AddNewPost = ({ navigation }: { navigation: any }) => {
   const profile = useSelector((state: RootState) => state.profile);
-
-  // State for the caption input
   const [caption, setCaption] = useState("");
-
-  // State for image preview
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
-
-  // State for video preview (placeholder image)
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-
-  // State for document preview
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
-
   const uploadProgress = 0;
-
   const canUploadDocument = selectedImages.length === 0 && !selectedVideo && !selectedDocument;
 
-  const handleDone = () => {
-    // Perform API call with user-uploaded data for post creation
-    // For example:
+  const handleDone = async () => {
+    for (const image of selectedImages) {
+      try {
+        const response = await fetch(image);
+        const blob = await response.blob();
+        const upload = await uploadFile(blob, image);
+        if (upload) console.log("Image uploaded successfully!", upload);
+      } catch (error) {
+        console.log("Error uploading file:", error);
+      }
+    }
     console.log("Caption:", caption);
     console.log("Images:", selectedImages);
     console.log("Video:", selectedVideo);
     console.log("Document:", selectedDocument);
-    // Make your API call here
-
-    // Reset states after API call
+    //next is create post API call
     setCaption("");
     setSelectedImages([]);
     setSelectedVideo(null);
@@ -53,6 +50,7 @@ const AddNewPost = ({ navigation }: { navigation: any }) => {
       if (result.canceled) {
         console.log("Image picker cancelled");
       } else if (selectedImages.length < 5) {
+        console.log("-------image file", result);
         const updatedImages = [...selectedImages, result.assets[0].uri];
         setSelectedImages(updatedImages);
       }
@@ -246,6 +244,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     justifyContent: "center",
     alignItems: "center",
+    minHeight: 300,
   },
   previewContainer: {
     flexDirection: "row",

@@ -8,6 +8,7 @@ export const API = {
     profile: "profile",
     post: "post/suggested",
     like: "like",
+    documentUpload: "user/document/extUpload",
   },
   POST: {
     comments: "post/comment/",
