@@ -5,10 +5,11 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import * as ImagePicker from "expo-image-picker";
 import { UserDisplay } from "./postUserImage";
-import { uploadFile } from "../../helper/post/postAttibutes";
+import { createPost, uploadFile } from "../../helper/post/postAttibutes";
 
 const AddNewPost = ({ navigation }: { navigation: any }) => {
   const profile = useSelector((state: RootState) => state.profile);
+  const token = useSelector((state: RootState) => state.data);
   const [caption, setCaption] = useState("");
   const [selectedImages, setSelectedImages] = useState<any[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
@@ -16,22 +17,59 @@ const AddNewPost = ({ navigation }: { navigation: any }) => {
   const uploadProgress = 0;
   const canUploadDocument = selectedImages.length === 0 && !selectedVideo && !selectedDocument;
 
+  interface Media {
+    images: { imgUrl: string; isActive: boolean }[];
+    videos: { videoUrl: string; isActive: boolean }[];
+    files: { fileUrl: string; isActive: boolean }[];
+  }
+
   const handleDone = async () => {
+    const media: Media = { images: [], videos: [], files: [] };
     for (const image of selectedImages) {
       try {
         const response = await fetch(image);
         const blob = await response.blob();
         const upload = await uploadFile(blob, image);
-        if (upload) console.log("Image uploaded successfully!", upload);
+        if (upload) {
+          media.images.push({ imgUrl: upload, isActive: true });
+          console.log("Image uploaded successfully!", upload);
+        }
       } catch (error) {
         console.log("Error uploading file:", error);
       }
     }
+    if (selectedVideo) {
+      try {
+        const response = await fetch(selectedVideo);
+        const blob = await response.blob();
+        const upload = await uploadFile(blob, selectedVideo);
+        if (upload) {
+          media.videos.push({ videoUrl: upload, isActive: true });
+          console.log("Video uploaded successfully!", upload);
+        }
+      } catch (error) {
+        console.log("Error uploading file:", error);
+      }
+    }
+
+    if (selectedDocument) {
+      try {
+        const response = await fetch(selectedDocument);
+        const blob = await response.blob();
+        const upload = await uploadFile(blob, selectedDocument);
+        if (upload) {
+          media.files.push({ fileUrl: upload, isActive: true });
+          console.log("File uploaded successfully!", upload);
+        }
+      } catch (error) {
+        console.log("Error uploading file:", error);
+      }
+    }
+    console.log("-------post---created", await createPost({ media, caption }, token || ""));
     console.log("Caption:", caption);
     console.log("Images:", selectedImages);
     console.log("Video:", selectedVideo);
     console.log("Document:", selectedDocument);
-    //next is create post API call
     setCaption("");
     setSelectedImages([]);
     setSelectedVideo(null);
@@ -43,14 +81,12 @@ const AddNewPost = ({ navigation }: { navigation: any }) => {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 1,
-        allowsEditing: true,
-        allowsMultipleSelection: false,
+        allowsMultipleSelection: true,
       });
 
       if (result.canceled) {
         console.log("Image picker cancelled");
       } else if (selectedImages.length < 5) {
-        console.log("-------image file", result);
         const updatedImages = [...selectedImages, result.assets[0].uri];
         setSelectedImages(updatedImages);
       }

@@ -29,8 +29,6 @@ export const handleLogin = async (
       .then((res) => {
         dispatch(loginUser(res.data.access_token));
         fetchUserProfile(dispatch, res.data.access_token);
-        //fetchUserPosts(dispatch, res.data.access_token, 1, 7);
-        //fetchUserLikedPosts(dispatch, res.data.access_token);
         if (res.data.access_token) navigation.navigate("Home", {});
       })
       .catch((error) => console.log(error));
